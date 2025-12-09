@@ -23,6 +23,7 @@ class AuthService {
         'id': user.id,
         'username': username,
         'email': email,
+        'password': password,
       });
 
       return null; // sukses
@@ -53,17 +54,9 @@ class AuthService {
       return "Terjadi kesalahan: $e";
     }
   }
-
-  // LOGIN GOOGLE
-  Future<String?> loginWithGoogle() async {
-    try {
-              await supabase.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: "trashsmart://auth-callback",
-        );
-      return null;
-    } catch (e) {
-      return "Google Login gagal: $e";
-    }
-  }
+  // LOGOUT
+  Future<void> logout() async {
+    await supabase.auth.signOut(); 
+ 
+}
 }

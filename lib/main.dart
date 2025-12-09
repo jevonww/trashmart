@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:trashsmart/pages/artikel1_page.dart';
+import 'package:trashsmart/pages/artikel2_page.dart';
+import 'package:trashsmart/pages/artikel3_page.dart';
+import 'package:trashsmart/pages/data_profile.dart';
 import 'package:trashsmart/pages/home_page.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/login_page.dart';
@@ -12,6 +16,9 @@ import 'pages/residu_page.dart';
 import 'pages/welcome_page.dart';
 import 'pages/trash_learning_page.dart';
 import 'pages/trash_news_page.dart';
+import 'pages/profile_page.dart';
+import 'pages/splash_video_page.dart';
+import 'pages/admin_panel_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,11 +41,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // HALAMAN AWAL
-      initialRoute: '/welcome',
+      initialRoute: '/',
 
       // ROUTES LIST
       routes: {
         '/login': (_) => const LoginPage(),
+         '/': (_) => const SplashVideoPage(),
         '/register': (_) => const RegisterPage(),
         '/home': (_) => const HomePage(),
         '/onboarding': (_) => const OnboardingPage(),
@@ -50,6 +58,17 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomePage(),
         '/learning': (context) => const TrashLearningPage(),
         '/news': (context) => const TrashNewsPage(),
+        '/data': (context) => DataProfilePage(
+      currentUsername: '',
+      currentEmail: '',
+    ),
+
+        '/artikel1': (context) => const Artikel1Page(),
+        '/artikel2': (context) => const Artikel2Page(),
+        '/artikel3': (context) => const Artikel3Page(),
+        '/profiles': (context) => const ProfilePage(),
+        '/adminpage': (context) => const AdminPage(),
+        
         // USER
         
       },

@@ -136,7 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       if (result == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Berhasil daftar! Silakan login.")),
+                          const SnackBar(content: Text("Berhasil daftar! Silakan confirm email , dan login.")),
                         );
                         Navigator.pop(context);
                       } else {
@@ -157,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 20),
 
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
                   child: const Text("Back to Login"),
                 ),
               ],
