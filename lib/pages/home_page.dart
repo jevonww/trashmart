@@ -39,7 +39,6 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xFFF9F5EC),
       body: Stack(
         children: [
-          // Konten utama
           SafeArea(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 350),
@@ -60,20 +59,17 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Tombol chatbot
           Positioned(
-  bottom: 20,
-  right: 20,
-  child: FloatingActionButton(
-    // hilangkan mini supaya lebih besar
-    backgroundColor: const Color.fromARGB(255, 66, 110, 68), // ganti warna jadi hijau cerah
-    onPressed: () {
-      // Navigasi ke halaman chatbot
-      Navigator.pushNamed(context, '/chatbot');
-    },
-    child: const Icon(Icons.chat_bubble_outline, size: 24), // sedikit lebih besar
-  ),
-),
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton(
+              backgroundColor: const Color.fromARGB(255, 66, 110, 68),
+              onPressed: () {
+                Navigator.pushNamed(context, '/chatbot');
+              },
+              child: const Icon(Icons.chat_bubble_outline, size: 24),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNav(
@@ -84,9 +80,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// ===========================================================
-//      FIX MULAI DARI SINI: HomeMainContent → Stateful
-// ===========================================================
+// ================= HOME CONTENT =================
 
 class HomeMainContent extends StatefulWidget {
   final ValueChanged<int>? onChangeTab;
@@ -97,7 +91,7 @@ class HomeMainContent extends StatefulWidget {
 }
 
 class _HomeMainContentState extends State<HomeMainContent> {
-  String username = "Smartizen"; // default
+  String username = "Smartizen";
 
   @override
   void initState() {
@@ -105,6 +99,70 @@ class _HomeMainContentState extends State<HomeMainContent> {
     loadUser();
   }
 
+  // ================= POPUP =================
+ void showReminderPopup() {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "🗑️ Pengingat",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF3F4F44),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Sudahkah kamu membuang sampah pada tempatnya hari ini?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  height: 1.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Terima kasih telah peduli lingkungan! 🌱'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                  child: const Text(
+                    "Sudah",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
+  // ================= LOAD USER =================
   Future<void> loadUser() async {
     final supabase = Supabase.instance.client;
     final user = supabase.auth.currentUser;
@@ -183,7 +241,9 @@ class _HomeMainContentState extends State<HomeMainContent> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF3F4F44)),
-                onPressed: () {},
+                onPressed: () {
+                  showReminderPopup(); // ✅ ini saja yang ditambahkan
+                },
                 child: const Text("Cek sekarang"),
               )
             ],

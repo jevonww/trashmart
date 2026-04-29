@@ -19,15 +19,21 @@ import 'pages/trash_news_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/splash_video_page.dart';
 import 'pages/admin_panel_page.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://vulbrvagbwglsknavrek.supabase.co',
+    url: 'https://jvfufpdtakovwuhkwdff.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1bGJydmFnYndnbHNrbmF2cmVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyODMyOTYsImV4cCI6MjA3ODg1OTI5Nn0.bieMLRaqBU4nHaNeEZNCuVhXFiGGzJrxg_vzF_VIBS4',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZnVmcGR0YWtvdnd1aGt3ZGZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTAxMDIsImV4cCI6MjA5MDc4NjEwMn0.1ZiNB3pq7XHMW6spn2CBLzofUozSbukMVG2iI8yNZDc',
   );
+
+  await NotificationService.initialize();
+  await NotificationService.scheduleRepeatingReminder(
+  intervalHours: 1,
+);
 
   runApp(const MyApp());
 }
@@ -46,7 +52,7 @@ class MyApp extends StatelessWidget {
       // ROUTES LIST
       routes: {
         '/login': (_) => const LoginPage(),
-         '/': (_) => const SplashVideoPage(),
+        '/': (_) => const SplashVideoPage(),
         '/register': (_) => const RegisterPage(),
         '/home': (_) => const HomePage(),
         '/onboarding': (_) => const OnboardingPage(),
@@ -59,18 +65,14 @@ class MyApp extends StatelessWidget {
         '/learning': (context) => const TrashLearningPage(),
         '/news': (context) => const TrashNewsPage(),
         '/data': (context) => DataProfilePage(
-      currentUsername: '',
-      currentEmail: '',
-    ),
-
+              currentUsername: '',
+              currentEmail: '',
+            ),
         '/artikel1': (context) => const Artikel1Page(),
         '/artikel2': (context) => const Artikel2Page(),
         '/artikel3': (context) => const Artikel3Page(),
         '/profiles': (context) => const ProfilePage(),
         '/adminpage': (context) => const AdminPage(),
-        
-        // USER
-        
       },
     );
   }
