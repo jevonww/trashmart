@@ -4,6 +4,7 @@ import 'bottom_nav.dart';
 import 'trash_learning_page.dart';
 import 'trash_news_page.dart';
 import 'profile_page.dart';
+import 'package:trashsmart/services/notification_service.dart';
 
 class HomePage extends StatefulWidget {
   final ValueChanged<int>? onChangeTab;
@@ -241,8 +242,8 @@ class _HomeMainContentState extends State<HomeMainContent> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF3F4F44)),
-                onPressed: () {
-                  showReminderPopup(); // ✅ ini saja yang ditambahkan
+                onPressed: () async {
+                  await NotificationService.showTestNotification();
                 },
                 child: const Text("Cek sekarang"),
               )

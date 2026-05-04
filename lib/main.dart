@@ -31,9 +31,7 @@ Future<void> main() async {
   );
 
   await NotificationService.initialize();
-  await NotificationService.scheduleRepeatingReminder(
-  intervalHours: 1,
-);
+  await NotificationService.scheduleDailyReminder();
 
   runApp(const MyApp());
 }

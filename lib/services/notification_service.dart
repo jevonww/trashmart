@@ -17,6 +17,11 @@ class NotificationService {
     );
 
     await notifications.initialize(settings);
+
+    await notifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
   static Future<void> scheduleDailyReminder() async {
@@ -36,31 +41,27 @@ class NotificationService {
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-  static Future<void> scheduleRepeatingReminder({
-    required int intervalHours,
-  }) async {
-    await notifications.periodicallyShow(
-      1,
+  static Future<void> showTestNotification() async {
+    await notifications.show(
+      999,
       '♻️ Pengingat TrashSmart',
-      'Sudahkah kamu membuang sampah pada tempatnya hari ini?',
-      RepeatInterval.hourly,
+      'Sudahkah kamu membuang sampah hari ini?',
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'trashsmart_repeat',
-          'TrashSmart Repeating Reminder',
-          channelDescription: 'Pengingat berkala membuang sampah',
+          'trashsmart_test',
+          'TrashSmart Test Notification',
+          channelDescription: 'Notifikasi uji TrashSmart',
           importance: Importance.max,
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 
