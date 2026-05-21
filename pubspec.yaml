@@ -57,6 +57,50 @@ flutter:
     - assets/splash.mp4
     - assets/reminder.png
     - assets/icon.png
+    - assets/refuse.png
+    - assets/reduce.png
+    - assets/reuse.png
+    - assets/recycle.png
+    
+    #refuse
+    - assets/refuse_header.png
+    - assets/refuse_earth.png
+    - assets/leaf.png
+    - assets/tas.png
+    - assets/sedotan.png
+    - assets/kado.png
+    - assets/hand_leaf.png
+    - assets/earth.png
+    - assets/money.png
+    - assets/sampah.png
+    
+    
+    #reduce
+    - assets/reduce_header.png
+    - assets/reduce_bln.png
+    - assets/basket.png
+    - assets/jar.png
+    - assets/food.png
+    - assets/cutlery.png
+
+    #reuse
+    - assets/reuse_header.png
+    - assets/reuse_leaf.png
+    - assets/reuse1.png
+    - assets/reuse2.png
+    - assets/reuse3.png
+    - assets/reuse4.png
+    - assets/reuse5.png
+    - assets/reuse6.png
+
+    #recycle
+    - assets/recycle_header.png
+    - assets/recycle1.png
+    - assets/recycle2.png
+    - assets/recycle3.png
+    - assets/recycle4.png
+
+
 
 # CONFIG ICON APP
 flutter_launcher_icons:

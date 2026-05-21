@@ -22,6 +22,10 @@ import 'pages/trash_news_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/splash_video_page.dart';
 import 'pages/admin_panel_page.dart';
+import 'pages/refuse_page.dart';
+import 'pages/reduce_page.dart';
+import 'pages/reuse_page.dart';
+import 'pages/recycle_page.dart';
 
 import 'services/notification_service.dart';
 
@@ -119,6 +123,14 @@ class MyApp extends StatelessWidget {
 
         '/splash': (_) =>
             const SplashVideoPage(),
+
+        '/refuse': (context) => const RefusePage(),
+
+        '/reduce': (context) => const ReducePage(),
+
+        '/reuse': (context) => const ReusePage(),
+
+        '/recycle': (context) => const RecyclePage(),
       },
     );
   }
