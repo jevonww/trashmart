@@ -9,14 +9,19 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() =>
+      _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController emailController =
+class _LoginPageState
+    extends State<LoginPage> {
+
+  final TextEditingController
+      emailController =
       TextEditingController();
 
-  final TextEditingController passwordController =
+  final TextEditingController
+      passwordController =
       TextEditingController();
 
   final auth = AuthService();
@@ -32,20 +37,30 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> loadRememberMe() async {
     final prefs =
-        await SharedPreferences.getInstance();
+        await SharedPreferences
+            .getInstance();
 
     final isRemember =
-        prefs.getBool('remember_me') ?? false;
+        prefs.getBool(
+              'remember_me',
+            ) ??
+            false;
 
     if (isRemember) {
       setState(() {
         rememberMe = true;
 
         emailController.text =
-            prefs.getString('email') ?? '';
+            prefs.getString(
+                  'email',
+                ) ??
+                '';
 
         passwordController.text =
-            prefs.getString('password') ?? '';
+            prefs.getString(
+                  'password',
+                ) ??
+                '';
       });
     }
   }
@@ -55,24 +70,32 @@ class _LoginPageState extends State<LoginPage> {
     String password,
   ) async {
     final prefs =
-        await SharedPreferences.getInstance();
+        await SharedPreferences
+            .getInstance();
 
     if (rememberMe) {
       await prefs.setBool(
-          'remember_me', true);
+        'remember_me',
+        true,
+      );
 
       await prefs.setString(
-          'email', email);
+        'email',
+        email,
+      );
 
       await prefs.setString(
-          'password', password);
+        'password',
+        password,
+      );
     } else {
       await prefs.remove(
           'remember_me');
 
       await prefs.remove('email');
 
-      await prefs.remove('password');
+      await prefs.remove(
+          'password');
     }
   }
 
@@ -85,16 +108,21 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Padding(
           padding:
-              const EdgeInsets.symmetric(
-                  horizontal: 32),
+              const EdgeInsets
+                  .symmetric(
+            horizontal: 32,
+          ),
 
-          child: SingleChildScrollView(
+          child:
+              SingleChildScrollView(
             child: Column(
               crossAxisAlignment:
-                  CrossAxisAlignment.center,
+                  CrossAxisAlignment
+                      .center,
 
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(
+                    height: 40),
 
                 // LOGO
                 Image.asset(
@@ -102,26 +130,33 @@ class _LoginPageState extends State<LoginPage> {
                   height: 150,
 
                   errorBuilder:
-                      (context, error,
-                              stackTrace) =>
+                      (
+                    context,
+                    error,
+                    stackTrace,
+                  ) =>
                           const FlutterLogo(
-                              size: 90),
+                    size: 90,
+                  ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(
+                    height: 20),
 
                 const Text(
                   "LOGIN",
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight:
-                        FontWeight.bold,
-                    color:
-                        Color(0xFF3C5122),
+                        FontWeight
+                            .bold,
+                    color: Color(
+                        0xFF3C5122),
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(
+                    height: 25),
 
                 // EMAIL FIELD
                 TextField(
@@ -130,13 +165,17 @@ class _LoginPageState extends State<LoginPage> {
 
                   decoration:
                       InputDecoration(
-                    hintText: "Email",
+                    hintText:
+                        "Email",
 
                     prefixIcon:
-                        const Icon(Icons
-                            .email_outlined),
+                        const Icon(
+                      Icons
+                          .email_outlined,
+                    ),
 
                     filled: true,
+
                     fillColor:
                         Colors.white,
 
@@ -151,12 +190,14 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius:
                           BorderRadius
                               .circular(
-                                  30),
+                        30,
+                      ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(
+                    height: 15),
 
                 // PASSWORD FIELD
                 TextField(
@@ -172,8 +213,10 @@ class _LoginPageState extends State<LoginPage> {
                         "Password",
 
                     prefixIcon:
-                        const Icon(Icons
-                            .lock_outline),
+                        const Icon(
+                      Icons
+                          .lock_outline,
+                    ),
 
                     suffixIcon:
                         IconButton(
@@ -194,6 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     filled: true,
+
                     fillColor:
                         Colors.white,
 
@@ -208,20 +252,24 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius:
                           BorderRadius
                               .circular(
-                                  30),
+                        30,
+                      ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(
+                    height: 10),
 
                 // REMEMBER ME
                 Row(
                   children: [
                     Checkbox(
-                      value: rememberMe,
+                      value:
+                          rememberMe,
 
-                      onChanged: (value) {
+                      onChanged:
+                          (value) {
                         setState(() {
                           rememberMe =
                               value!;
@@ -230,35 +278,44 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     const Text(
-                        "Remember Me"),
+                      "Remember Me",
+                    ),
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(
+                    height: 10),
 
                 // LOGIN BUTTON
                 SizedBox(
-                  width: double.infinity,
+                  width:
+                      double.infinity,
+
                   height: 48,
 
-                  child: ElevatedButton(
+                  child:
+                      ElevatedButton(
                     style:
                         ElevatedButton
                             .styleFrom(
                       backgroundColor:
                           const Color(
-                              0xFF3C5122),
+                        0xFF3C5122,
+                      ),
 
                       shape:
                           RoundedRectangleBorder(
                         borderRadius:
                             BorderRadius
                                 .circular(
-                                    14),
+                          14,
+                        ),
                       ),
                     ),
 
-                    onPressed: () async {
+                    onPressed:
+                        () async {
+
                       String email =
                           emailController
                               .text
@@ -269,11 +326,155 @@ class _LoginPageState extends State<LoginPage> {
                               .text
                               .trim();
 
+                      // VALIDASI KOSONG
+                      if (email
+                              .isEmpty ||
+                          password
+                              .isEmpty) {
+
+                        showDialog(
+                          context:
+                              context,
+
+                          builder:
+                              (context) =>
+                                  AlertDialog(
+                            backgroundColor:
+                                const Color(
+                              0xFFF9F5EC,
+                            ),
+
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(
+                                25,
+                              ),
+                            ),
+
+                            title:
+                                Column(
+                              children: [
+                                Container(
+                                  padding:
+                                      const EdgeInsets.all(
+                                    15,
+                                  ),
+
+                                  decoration:
+                                      BoxDecoration(
+                                    color:
+                                        Colors.orange.shade100,
+
+                                    shape:
+                                        BoxShape.circle,
+                                  ),
+
+                                  child:
+                                      const Icon(
+                                    Icons.warning_amber_rounded,
+                                    color:
+                                        Colors.orange,
+                                    size:
+                                        40,
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                    height:
+                                        15),
+
+                                const Text(
+                                  "Peringatan",
+
+                                  textAlign:
+                                      TextAlign.center,
+
+                                  style:
+                                      TextStyle(
+                                    fontWeight:
+                                        FontWeight.bold,
+
+                                    color:
+                                        Color(
+                                      0xFF3C5122,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            content:
+                                const Text(
+                              "Masukkan email dan password terlebih dahulu",
+
+                              textAlign:
+                                  TextAlign.center,
+                            ),
+
+                            actionsAlignment:
+                                MainAxisAlignment.center,
+
+                            actions: [
+                              SizedBox(
+                                width:
+                                    120,
+
+                                height:
+                                    45,
+
+                                child:
+                                    ElevatedButton(
+                                  style:
+                                      ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color(
+                                      0xFF3C5122,
+                                    ),
+
+                                    shape:
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(
+                                        15,
+                                      ),
+                                    ),
+                                  ),
+
+                                  onPressed:
+                                      () {
+                                    Navigator.pop(
+                                        context);
+                                  },
+
+                                  child:
+                                      const Text(
+                                    "OK",
+
+                                    style:
+                                        TextStyle(
+                                      color:
+                                          Colors.white,
+
+                                      fontWeight:
+                                          FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        return;
+                      }
+
                       // ADMIN LOGIN
                       if (email ==
                               "admin" &&
                           password ==
                               "12345") {
+
                         Navigator
                             .pushReplacementNamed(
                           context,
@@ -285,13 +486,15 @@ class _LoginPageState extends State<LoginPage> {
 
                       // LOGIN SUPABASE
                       final result =
-                          await auth.login(
+                          await auth
+                              .login(
                         email,
                         password,
                       );
 
                       if (result ==
                           null) {
+
                         // SAVE REMEMBER ME
                         await saveRememberMe(
                           email,
@@ -303,31 +506,163 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           '/onboarding',
                         );
+
                       } else {
-                        ScaffoldMessenger
-                                .of(context)
-                            .showSnackBar(
-                          SnackBar(
+
+                        showDialog(
+                          context:
+                              context,
+
+                          builder:
+                              (context) =>
+                                  AlertDialog(
+                            backgroundColor:
+                                const Color(
+                              0xFFF9F5EC,
+                            ),
+
+                            shape:
+                                RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(
+                                25,
+                              ),
+                            ),
+
+                            title:
+                                Column(
+                              children: [
+                                Container(
+                                  padding:
+                                      const EdgeInsets.all(
+                                    15,
+                                  ),
+
+                                  decoration:
+                                      BoxDecoration(
+                                    color:
+                                        Colors.red.shade100,
+
+                                    shape:
+                                        BoxShape.circle,
+                                  ),
+
+                                  child:
+                                      const Icon(
+                                    Icons.error_outline,
+                                    color:
+                                        Colors.red,
+                                    size:
+                                        40,
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                    height:
+                                        15),
+
+                                const Text(
+                                  "Login Gagal",
+
+                                  textAlign:
+                                      TextAlign.center,
+
+                                  style:
+                                      TextStyle(
+                                    fontWeight:
+                                        FontWeight.bold,
+
+                                    color:
+                                        Color(
+                                      0xFF3C5122,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
                             content:
-                                Text(result),
+                                const Text(
+                              "Email atau password salah.\nSilahkan coba lagi.",
+
+                              textAlign:
+                                  TextAlign.center,
+                            ),
+
+                            actionsAlignment:
+                                MainAxisAlignment.center,
+
+                            actions: [
+                              SizedBox(
+                                width:
+                                    120,
+
+                                height:
+                                    45,
+
+                                child:
+                                    ElevatedButton(
+                                  style:
+                                      ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color(
+                                      0xFF3C5122,
+                                    ),
+
+                                    shape:
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(
+                                        15,
+                                      ),
+                                    ),
+                                  ),
+
+                                  onPressed:
+                                      () {
+                                    Navigator.pop(
+                                        context);
+                                  },
+
+                                  child:
+                                      const Text(
+                                    "OK",
+
+                                    style:
+                                        TextStyle(
+                                      color:
+                                          Colors.white,
+
+                                      fontWeight:
+                                          FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       }
                     },
 
-                    child: const Text(
+                    child:
+                        const Text(
                       "Masuk",
 
-                      style: TextStyle(
-                        fontSize: 16,
-                        color:
-                            Colors.white,
+                      style:
+                          TextStyle(
+                        fontSize:
+                            16,
+
+                        color: Colors
+                            .white,
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(
+                    height: 15),
 
                 // REGISTER
                 Row(
@@ -341,12 +676,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     TextButton(
-                      onPressed: () {
+                      onPressed:
+                          () {
                         Navigator.push(
                           context,
+
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const RegisterPage(),
+                            builder:
+                                (_) =>
+                                    const RegisterPage(),
                           ),
                         );
                       },

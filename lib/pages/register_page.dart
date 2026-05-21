@@ -290,7 +290,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                     content:
                                         const Text(
-                                      "Akun berhasil dibuat.\nSilakan login ke akun Anda.",
+                                      "Akun berhasil dibuat.\nSilakan buka email untuk confirm login ke akun Anda.",
                                     ),
                                     actions: [
                                       SizedBox(
