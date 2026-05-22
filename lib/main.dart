@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:trashsmart/pages/artikel1_page.dart';
 import 'package:trashsmart/pages/artikel2_page.dart';
 import 'package:trashsmart/pages/artikel3_page.dart';
@@ -19,18 +21,28 @@ import 'pages/trash_news_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/splash_video_page.dart';
 import 'pages/admin_panel_page.dart';
+import 'pages/refuse_page.dart';
+import 'pages/reduce_page.dart';
+import 'pages/reuse_page.dart';
+import 'pages/recycle_page.dart';
+
 import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://jvfufpdtakovwuhkwdff.supabase.co',
+    url:
+        'https://jvfufpdtakovwuhkwdff.supabase.co',
+
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZnVmcGR0YWtvdnd1aGt3ZGZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTAxMDIsImV4cCI6MjA5MDc4NjEwMn0.1ZiNB3pq7XHMW6spn2CBLzofUozSbukMVG2iI8yNZDc',
   );
 
+  // NOTIFICATION
   await NotificationService.initialize();
+
+  // PENGINGAT HARIAN
   await NotificationService.scheduleDailyReminder();
 
   runApp(const MyApp());
@@ -47,7 +59,7 @@ class MyApp extends StatelessWidget {
       // HALAMAN AWAL
       initialRoute: '/',
 
-      // ROUTES LIST
+      // ROUTES
       routes: {
         '/login': (_) => const LoginPage(),
         '/': (_) => const SplashVideoPage(),
@@ -66,12 +78,104 @@ class MyApp extends StatelessWidget {
               currentUsername: '',
               currentEmail: '',
             ),
-        '/artikel1': (context) => const Artikel1Page(),
-        '/artikel2': (context) => const Artikel2Page(),
-        '/artikel3': (context) => const Artikel3Page(),
-        '/profiles': (context) => const ProfilePage(),
-        '/adminpage': (context) => const AdminPage(),
+
+        '/artikel1': (_) =>
+            const Artikel1Page(),
+
+        '/artikel2': (_) =>
+            const Artikel2Page(),
+
+        '/artikel3': (_) =>
+            const Artikel3Page(),
+
+        '/profiles': (_) =>
+            const ProfilePage(),
+
+        '/adminpage': (_) =>
+            const AdminPage(),
+
+        '/splash': (_) =>
+            const SplashVideoPage(),
+
+        '/refuse': (context) => const RefusePage(),
+
+        '/reduce': (context) => const ReducePage(),
+
+        '/reuse': (context) => const ReusePage(),
+
+        '/recycle': (context) => const RecyclePage(),
       },
     );
+  }
+}
+
+// =====================================================
+// AUTH CHECKER
+// =====================================================
+
+class AuthChecker extends StatefulWidget {
+  const AuthChecker({super.key});
+
+  @override
+  State<AuthChecker> createState() =>
+      _AuthCheckerState();
+}
+
+class _AuthCheckerState
+    extends State<AuthChecker> {
+
+  bool loading = true;
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  Future<void> checkLogin() async {
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final remember =
+        prefs.getBool('remember_me') ?? false;
+
+    final session =
+        Supabase.instance.client.auth.currentSession;
+
+    // JIKA TIDAK CENTANG REMEMBER ME
+    if (!remember && session != null) {
+      await Supabase.instance.client.auth.signOut();
+    }
+
+    setState(() {
+      isLoggedIn =
+          remember &&
+          Supabase.instance.client.auth.currentSession !=
+              null;
+
+      loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // LOADING
+    if (loading) {
+      return const Scaffold(
+        body: Center(
+          child:
+              CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // SUDAH LOGIN
+    if (isLoggedIn) {
+      return const HomePage();
+    }
+
+    // BELUM LOGIN
+    return const SplashVideoPage();
   }
 }

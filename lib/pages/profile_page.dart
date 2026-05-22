@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:trashsmart/pages/reward_page.dart';
+import 'package:trashsmart/pages/save_artikel.dart';
 import 'data_profile.dart';
 import 'reset_password_page.dart';
 
@@ -183,7 +185,22 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         }),
 
-                        menuItem(Icons.bookmark, "Save Artikel", () {}),
+                        menuItem(Icons.bookmark, "Save Artikel", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SavedArticlesPage()),
+                          );
+                        }),
+
+                        // === Reward ===
+                        menuItem(Icons.redeem, "Reward", () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RewardPage()),
+                          );
+                        }),
 
                         menuItem(Icons.logout, "Logout", () => _handleLogout(context)),
                       ],

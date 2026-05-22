@@ -4,9 +4,13 @@ class AuthService {
   final supabase = Supabase.instance.client;
 
   // REGISTER
-  Future<String?> register(String email, String password, String username) async {
+  Future<String?> register(
+    String email,
+    String password,
+    String username,
+  ) async {
     try {
-      // 1. Sign Up
+      // SIGN UP
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
@@ -18,7 +22,7 @@ class AuthService {
         return "Gagal membuat akun";
       }
 
-      // 2. Insert ke tabel profiles (HARUS pakai id = user.id)
+      // INSERT PROFILE
       await supabase.from('profiles').insert({
         'id': user.id,
         'username': username,
@@ -26,37 +30,44 @@ class AuthService {
         'password': password,
       });
 
-      return null; // sukses
+      return null;
 
     } on PostgrestException catch (e) {
       return e.message;
+
     } on AuthException catch (e) {
       return e.message;
+
     } catch (e) {
       return "Terjadi kesalahan: $e";
     }
   }
 
   // LOGIN
-  Future<String?> login(String email, String password) async {
+  Future<String?> login(
+    String email,
+    String password,
+  ) async {
     try {
-      final response = await supabase.auth.signInWithPassword(
+      final response =
+          await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
 
-      if (response.user == null) return "Email atau password salah";
+      if (response.user == null) {
+        return "Email atau password salah";
+      }
 
       return null;
-    } on AuthException catch (e) {
-      return e.message;
+
     } catch (e) {
-      return "Terjadi kesalahan: $e";
+      return "Email atau password salah";
     }
   }
+
   // LOGOUT
   Future<void> logout() async {
-    await supabase.auth.signOut(); 
- 
-}
+    await supabase.auth.signOut();
+  }
 }

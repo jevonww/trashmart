@@ -14,6 +14,11 @@ import 'package:trashsmart/pages/b3_page.dart';
 import 'package:trashsmart/pages/kertas_page.dart';
 import 'package:trashsmart/pages/residu_page.dart';
 
+import 'refuse_page.dart';
+import 'reduce_page.dart';
+import 'reuse_page.dart';
+import 'recycle_page.dart';
+
 class HomePage extends StatefulWidget {
   final ValueChanged<int>? onChangeTab;
 
@@ -122,10 +127,9 @@ class _HomeMainContentState extends State<HomeMainContent> {
     loadUser();
   }
 
-  // ================= LOAD USER =================
-
   Future<void> loadUser() async {
     final supabase = Supabase.instance.client;
+
     final user = supabase.auth.currentUser;
 
     if (user == null) return;
@@ -147,7 +151,7 @@ class _HomeMainContentState extends State<HomeMainContent> {
       padding: const EdgeInsets.all(16),
 
       children: [
-        // ================= HEADER =================
+        // HEADER
         Row(
           children: [
             Column(
@@ -188,23 +192,62 @@ class _HomeMainContentState extends State<HomeMainContent> {
           ],
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
 
-        // ================= QUICK MENU =================
+        // MENU
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
           children: [
-            _quickSquare(Icons.info_outline, "Info"),
-            _quickSquare(Icons.star_border, "Tips"),
-            _quickSquare(Icons.water_drop_outlined, "Air"),
-            _quickSquare(Icons.recycling_outlined, "Sampah"),
+            _menuIcon(
+              image: "assets/refuse.png",
+              label: "Refuse",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RefusePage()),
+                );
+              },
+            ),
+
+            _menuIcon(
+              image: "assets/reduce.png",
+              label: "Reduce",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReducePage()),
+                );
+              },
+            ),
+
+            _menuIcon(
+              image: "assets/reuse.png",
+              label: "Reuse",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReusePage()),
+                );
+              },
+            ),
+
+            _menuIcon(
+              image: "assets/recycle.png",
+              label: "Recycle",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RecyclePage()),
+                );
+              },
+            ),
           ],
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
 
-        // ================= REMINDER =================
+        // REMINDER
         const Text(
           "Pengingat untukmu",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -247,7 +290,7 @@ class _HomeMainContentState extends State<HomeMainContent> {
 
         const SizedBox(height: 22),
 
-        // ================= TRASH LEARNING =================
+        // TRASH LEARNING TITLE
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
@@ -259,10 +302,9 @@ class _HomeMainContentState extends State<HomeMainContent> {
 
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TrashLearningPage()),
-                );
+                if (widget.onChangeTab != null) {
+                  widget.onChangeTab!(1);
+                }
               },
 
               child: const Text(
@@ -279,6 +321,7 @@ class _HomeMainContentState extends State<HomeMainContent> {
 
         const SizedBox(height: 10),
 
+        // LEARNING CARD
         SizedBox(
           height: 180,
 
@@ -305,7 +348,7 @@ class _HomeMainContentState extends State<HomeMainContent> {
 
         const SizedBox(height: 20),
 
-        // ================= NEWS =================
+        // NEWS
         const Text("TrashNews", style: TextStyle(fontWeight: FontWeight.bold)),
 
         const SizedBox(height: 8),
@@ -343,37 +386,32 @@ class _HomeMainContentState extends State<HomeMainContent> {
     );
   }
 
-  // ================= QUICK BUTTON =================
-
-  Widget _quickSquare(IconData icon, String label) {
-    return Container(
-      width: 64,
-      height: 64,
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-
-        boxShadow: [
-          BoxShadow(color: Colors.black12.withOpacity(0.04), blurRadius: 6),
-        ],
-      ),
+  Widget _menuIcon({
+    required String image,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
 
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-
         children: [
-          Icon(icon, color: Colors.black54),
+          Image.asset(image, width: 58, height: 58, fit: BoxFit.contain),
 
           const SizedBox(height: 6),
 
-          Text(label, style: const TextStyle(fontSize: 11)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF445236),
+            ),
+          ),
         ],
       ),
     );
   }
-
-  // ================= LEARNING CARD =================
 
   Widget _learningCard(BuildContext context, String title, String asset) {
     return GestureDetector(
@@ -436,41 +474,56 @@ class _HomeMainContentState extends State<HomeMainContent> {
     );
   }
 
-  // ================= NEWS CARD =================
-
   Widget _newsCard(BuildContext context, String title, String imageUrl) {
-    return Container(
-      width: 180,
-      margin: const EdgeInsets.only(right: 12),
+    return GestureDetector(
+      onTap: () {
+        if (widget.onChangeTab != null) {
+          widget.onChangeTab!(2);
+        }
+      },
 
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: 180,
+        margin: const EdgeInsets.only(right: 12),
 
-        boxShadow: [
-          BoxShadow(color: Colors.black12.withOpacity(0.04), blurRadius: 8),
-        ],
-      ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
 
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+          boxShadow: [
+            BoxShadow(color: Colors.black12.withOpacity(0.04), blurRadius: 8),
+          ],
+        ),
 
-            child: Image.asset(
-              imageUrl,
-              height: 100,
-              width: double.infinity,
-              fit: BoxFit.cover,
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(14),
+              ),
+
+              child: imageUrl.startsWith('http')
+                  ? Image.network(
+                      imageUrl,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      imageUrl,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.all(8),
+            Padding(
+              padding: const EdgeInsets.all(8),
 
-            child: Text(title, style: const TextStyle(fontSize: 13)),
-          ),
-        ],
+              child: Text(title, style: const TextStyle(fontSize: 13)),
+            ),
+          ],
+        ),
       ),
     );
   }
