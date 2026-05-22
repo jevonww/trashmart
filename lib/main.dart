@@ -5,6 +5,7 @@ import 'package:trashsmart/pages/artikel2_page.dart';
 import 'package:trashsmart/pages/artikel3_page.dart';
 import 'package:trashsmart/pages/data_profile.dart';
 import 'package:trashsmart/pages/home_page.dart';
+import 'package:trashsmart/pages/reward_page.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomePage(),
         '/learning': (context) => const TrashLearningPage(),
         '/news': (context) => const TrashNewsPage(),
+        '/reward': (context) => const RewardPage(),
         '/data': (context) => DataProfilePage(
               currentUsername: '',
               currentEmail: '',
