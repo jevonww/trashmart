@@ -56,6 +56,30 @@ flutter:
     - assets/ornamen_2.png
     - assets/splash.mp4
     - assets/reminder.png
+    - assets/sampahorganik.png
+    - assets/kayu.png
+    - assets/daun_kering.png
+    - assets/botol_plastik.png
+    - assets/kaleng.png
+    - assets/kaca.png
+    - assets/plastik.png
+    - assets/baterai.png
+    - assets/obat.png
+    - assets/aki.png
+    - assets/deterjen.png
+    - assets/koran.png
+    - assets/kardus.png
+    - assets/kertas_hvs.png
+    - assets/kantong_kertas.png
+    - assets/styrofoam.png
+    - assets/popok.png
+    - assets/rokok.png
+    - assets/masker.png
+    - assets/kantong_teh.png
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
     - assets/icon.png
     - assets/refuse.png
     - assets/reduce.png

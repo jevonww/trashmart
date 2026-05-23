@@ -8,7 +8,12 @@ import 'profile_page.dart';
 
 import 'package:trashsmart/services/notification_service.dart';
 
-// IMPORT PAGE
+import 'package:trashsmart/pages/organik_page.dart';
+import 'package:trashsmart/pages/anorganik_page.dart';
+import 'package:trashsmart/pages/b3_page.dart';
+import 'package:trashsmart/pages/kertas_page.dart';
+import 'package:trashsmart/pages/residu_page.dart';
+
 import 'refuse_page.dart';
 import 'reduce_page.dart';
 import 'reuse_page.dart';
@@ -17,10 +22,7 @@ import 'recycle_page.dart';
 class HomePage extends StatefulWidget {
   final ValueChanged<int>? onChangeTab;
 
-  const HomePage({
-    super.key,
-    this.onChangeTab,
-  });
+  const HomePage({super.key, this.onChangeTab});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePage> {
 
     pages = [
       HomeMainContent(onChangeTab: changeTab),
-      TrashLearningPage(onChangeTab: changeTab),
+      const TrashLearningPage(),
       TrashNewsPage(onChangeTab: changeTab),
       ProfilePage(onChangeTab: changeTab),
     ];
@@ -75,10 +77,7 @@ class _HomePageState extends State<HomePage> {
 
               child: SizedBox(
                 key: ValueKey<int>(selectedIndex),
-                child: IndexedStack(
-                  index: selectedIndex,
-                  children: pages,
-                ),
+                child: IndexedStack(index: selectedIndex, children: pages),
               ),
             ),
           ),
@@ -86,18 +85,15 @@ class _HomePageState extends State<HomePage> {
           Positioned(
             bottom: 20,
             right: 20,
+
             child: FloatingActionButton(
-              backgroundColor:
-                  const Color.fromARGB(255, 66, 110, 68),
+              backgroundColor: const Color.fromARGB(255, 66, 110, 68),
 
               onPressed: () {
                 Navigator.pushNamed(context, '/chatbot');
               },
 
-              child: const Icon(
-                Icons.chat_bubble_outline,
-                size: 24,
-              ),
+              child: const Icon(Icons.chat_bubble_outline, size: 24),
             ),
           ),
         ],
@@ -116,18 +112,13 @@ class _HomePageState extends State<HomePage> {
 class HomeMainContent extends StatefulWidget {
   final ValueChanged<int>? onChangeTab;
 
-  const HomeMainContent({
-    super.key,
-    this.onChangeTab,
-  });
+  const HomeMainContent({super.key, this.onChangeTab});
 
   @override
-  State<HomeMainContent> createState() =>
-      _HomeMainContentState();
+  State<HomeMainContent> createState() => _HomeMainContentState();
 }
 
-class _HomeMainContentState
-    extends State<HomeMainContent> {
+class _HomeMainContentState extends State<HomeMainContent> {
   String username = "Smartizen";
 
   @override
@@ -135,8 +126,6 @@ class _HomeMainContentState
     super.initState();
     loadUser();
   }
-
-  // ================= LOAD USER =================
 
   Future<void> loadUser() async {
     final supabase = Supabase.instance.client;
@@ -162,16 +151,13 @@ class _HomeMainContentState
       padding: const EdgeInsets.all(16),
 
       children: [
-
-        // ================= HEADER =================
-
+        // HEADER
         Row(
           children: [
             Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
+              crossAxisAlignment: CrossAxisAlignment.start,
 
+              children: [
                 Text(
                   "Halo, $username!",
                   style: const TextStyle(
@@ -200,8 +186,7 @@ class _HomeMainContentState
 
               child: const CircleAvatar(
                 radius: 20,
-                backgroundImage:
-                    AssetImage('assets/logo.png'),
+                backgroundImage: AssetImage('assets/logo.png'),
               ),
             ),
           ],
@@ -209,23 +194,18 @@ class _HomeMainContentState
 
         const SizedBox(height: 24),
 
-        // ================= MENU =================
-
+        // MENU
         Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceEvenly,
-          children: [
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
+          children: [
             _menuIcon(
               image: "assets/refuse.png",
               label: "Refuse",
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const RefusePage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const RefusePage()),
                 );
               },
             ),
@@ -236,10 +216,7 @@ class _HomeMainContentState
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const ReducePage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const ReducePage()),
                 );
               },
             ),
@@ -250,10 +227,7 @@ class _HomeMainContentState
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const ReusePage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const ReusePage()),
                 );
               },
             ),
@@ -264,10 +238,7 @@ class _HomeMainContentState
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const RecyclePage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const RecyclePage()),
                 );
               },
             ),
@@ -276,8 +247,7 @@ class _HomeMainContentState
 
         const SizedBox(height: 24),
 
-        // ================= REMINDER =================
-
+        // REMINDER
         const Text(
           "Pengingat untukmu",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -295,44 +265,63 @@ class _HomeMainContentState
 
           child: Row(
             children: [
-
               const Expanded(
                 child: Text(
                   "Sudah buang sampah hari ini?",
-                  style:
-                      TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor:
-                      const Color(0xFF3F4F44),
+                  foregroundColor: const Color(0xFF3F4F44),
                 ),
 
                 onPressed: () async {
-                  await NotificationService
-                      .showTestNotification();
+                  await NotificationService.showTestNotification();
                 },
 
                 child: const Text("Cek sekarang"),
-              )
+              ),
             ],
           ),
         ),
 
         const SizedBox(height: 22),
 
-        // ================= LEARNING =================
+        // TRASH LEARNING TITLE
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-        const Text(
-          "TrashLearning",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          children: [
+            const Text(
+              "TrashLearning",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+
+            GestureDetector(
+              onTap: () {
+                if (widget.onChangeTab != null) {
+                  widget.onChangeTab!(1);
+                }
+              },
+
+              child: const Text(
+                "Lihat Semua >",
+                style: TextStyle(
+                  color: Color(0xFF8CB66B),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
+        // LEARNING CARD
         SizedBox(
           height: 180,
 
@@ -340,12 +329,7 @@ class _HomeMainContentState
             scrollDirection: Axis.horizontal,
 
             children: [
-
-              _learningCard(
-                context,
-                "Sampah Organik",
-                "assets/organik.png",
-              ),
+              _learningCard(context, "Sampah Organik", "assets/organik.png"),
 
               _learningCard(
                 context,
@@ -353,35 +337,19 @@ class _HomeMainContentState
                 "assets/anorganik.png",
               ),
 
-              _learningCard(
-                context,
-                "Sampah B3",
-                "assets/b3.png",
-              ),
+              _learningCard(context, "Sampah B3", "assets/b3.png"),
 
-              _learningCard(
-                context,
-                "Sampah Kertas",
-                "assets/kertas.png",
-              ),
+              _learningCard(context, "Sampah Kertas", "assets/kertas.png"),
 
-              _learningCard(
-                context,
-                "Sampah Residu",
-                "assets/residu.png",
-              ),
+              _learningCard(context, "Sampah Residu", "assets/residu.png"),
             ],
           ),
         ),
 
         const SizedBox(height: 20),
 
-        // ================= NEWS =================
-
-        const Text(
-          "TrashNews",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        // NEWS
+        const Text("TrashNews", style: TextStyle(fontWeight: FontWeight.bold)),
 
         const SizedBox(height: 8),
 
@@ -392,7 +360,6 @@ class _HomeMainContentState
             scrollDirection: Axis.horizontal,
 
             children: [
-
               _newsCard(
                 context,
                 "Pertemuan bilateral Indonesia - Norwegia bahas solusi sampah plastik",
@@ -419,8 +386,6 @@ class _HomeMainContentState
     );
   }
 
-  // ================= MENU ICON =================
-
   Widget _menuIcon({
     required String image,
     required String label,
@@ -431,13 +396,7 @@ class _HomeMainContentState
 
       child: Column(
         children: [
-
-          Image.asset(
-            image,
-            width: 58,
-            height: 58,
-            fit: BoxFit.contain,
-          ),
+          Image.asset(image, width: 58, height: 58, fit: BoxFit.contain),
 
           const SizedBox(height: 6),
 
@@ -454,60 +413,60 @@ class _HomeMainContentState
     );
   }
 
-  // ================= LEARNING CARD =================
-
-  Widget _learningCard(
-    BuildContext context,
-    String title,
-    String asset,
-  ) {
+  Widget _learningCard(BuildContext context, String title, String asset) {
     return GestureDetector(
       onTap: () {
-        if (widget.onChangeTab != null) {
-          widget.onChangeTab!(1);
-          return;
+        Widget page;
+
+        switch (title) {
+          case "Sampah Organik":
+            page = const OrganikPage();
+            break;
+
+          case "Sampah Anorganik":
+            page = const AnorganikPage();
+            break;
+
+          case "Sampah B3":
+            page = const B3Page();
+            break;
+
+          case "Sampah Kertas":
+            page = const KertasPage();
+            break;
+
+          case "Sampah Residu":
+            page = const ResiduPage();
+            break;
+
+          default:
+            page = const TrashLearningPage();
         }
 
-        final homeState =
-            context.findAncestorStateOfType<
-                _HomePageState>();
-
-        homeState?.setState(() {
-          homeState.selectedIndex = 1;
-        });
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
       },
 
       child: Container(
         width: 120,
-        margin:
-            const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(right: 12),
 
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-              BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15),
         ),
 
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
-            Image.asset(
-              asset,
-              width: 80,
-              height: 80,
-              fit: BoxFit.contain,
-            ),
+            Image.asset(asset, width: 80, height: 80, fit: BoxFit.contain),
 
             const SizedBox(height: 8),
 
             Text(
               title,
               textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12),
             ),
           ],
         ),
@@ -515,60 +474,35 @@ class _HomeMainContentState
     );
   }
 
-  // ================= NEWS CARD =================
-
-  Widget _newsCard(
-    BuildContext context,
-    String title,
-    String imageUrl,
-  ) {
+  Widget _newsCard(BuildContext context, String title, String imageUrl) {
     return GestureDetector(
       onTap: () {
         if (widget.onChangeTab != null) {
           widget.onChangeTab!(2);
-          return;
         }
-
-        final homeState =
-            context.findAncestorStateOfType<
-                _HomePageState>();
-
-        homeState?.setState(() {
-          homeState.selectedIndex = 2;
-        });
       },
 
       child: Container(
         width: 180,
-        margin:
-            const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(right: 12),
 
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-              BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14),
 
           boxShadow: [
-            BoxShadow(
-              color:
-                  Colors.black12.withOpacity(
-                      0.04),
-              blurRadius: 8,
-            )
+            BoxShadow(color: Colors.black12.withOpacity(0.04), blurRadius: 8),
           ],
         ),
 
         child: Column(
           children: [
-
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(
+              borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(14),
               ),
 
-              child: imageUrl.startsWith(
-                      'http')
+              child: imageUrl.startsWith('http')
                   ? Image.network(
                       imageUrl,
                       height: 100,
@@ -584,14 +518,9 @@ class _HomeMainContentState
             ),
 
             Padding(
-              padding:
-                  const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
 
-              child: Text(
-                title,
-                style: const TextStyle(
-                    fontSize: 13),
-              ),
+              child: Text(title, style: const TextStyle(fontSize: 13)),
             ),
           ],
         ),
