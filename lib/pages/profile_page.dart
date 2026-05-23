@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashsmart/pages/reward_page.dart';
 import 'package:trashsmart/pages/save_artikel.dart';
 import 'data_profile.dart';
@@ -50,13 +51,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F3E8),
-
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // ================= HEADER =================
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -74,7 +73,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset("assets/logo_tanpanama.png", width: 50),
+                              Image.asset(
+                                "assets/logo_tanpanama.png",
+                                width: 50,
+                              ),
                               const SizedBox(width: 6),
                               const Text(
                                 "TRASHSMART",
@@ -90,12 +92,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
 
-                      // BACK BUTTON
                       Positioned(
                         left: 20,
                         top: 40,
                         child: GestureDetector(
-                          onTap: () => Navigator.pushReplacementNamed(context, '/home'),
+                          onTap: () =>
+                              Navigator.pushReplacementNamed(context, '/home'),
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
@@ -107,7 +109,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
 
-                      // FOTO PROFIL (default)
                       Positioned(
                         bottom: -55,
                         left: 0,
@@ -126,17 +127,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   const SizedBox(height: 70),
 
-                  // ================= USERNAME =================
                   Text(
                     username,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
 
                   const SizedBox(height: 6),
 
-                  // ================= EMAIL =================
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFD1E2C4),
                       borderRadius: BorderRadius.circular(20),
@@ -146,7 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   const SizedBox(height: 24),
 
-                  // ================= MENU BOX =================
                   Container(
                     width: 320,
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -163,7 +167,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Column(
                       children: [
-                        // === EDIT PROFILE FIXED ===
                         menuItem(Icons.edit, "Edit Profile", () {
                           Navigator.push(
                             context,
@@ -176,12 +179,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ).then((_) => loadProfile());
                         }),
 
-                        // === RESET PASSWORD ===
                         menuItem(Icons.lock_reset, "Reset Password", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ResetPasswordPage()),
+                              builder: (context) =>
+                                  const ResetPasswordPage(),
+                            ),
                           );
                         }),
 
@@ -189,20 +193,26 @@ class _ProfilePageState extends State<ProfilePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const SavedArticlesPage()),
+                              builder: (context) =>
+                                  const SavedArticlesPage(),
+                            ),
                           );
                         }),
 
-                        // === Reward ===
                         menuItem(Icons.redeem, "Reward", () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const RewardPage()),
+                              builder: (context) => const RewardPage(),
+                            ),
                           );
                         }),
 
-                        menuItem(Icons.logout, "Logout", () => _handleLogout(context)),
+                        menuItem(
+                          Icons.logout,
+                          "Logout",
+                          () => _handleLogout(context),
+                        ),
                       ],
                     ),
                   ),
@@ -212,8 +222,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // =============== LOGOUT ===============
-
   Future<void> _handleLogout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -221,22 +229,36 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('Logout'),
         content: const Text('Apakah Anda yakin ingin logout?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Batal')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Logout')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Logout'),
+          ),
         ],
       ),
     );
 
     if (confirmed != true) return;
 
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove('remember_me');
+    await prefs.remove('email');
+    await prefs.remove('password');
+
     await Supabase.instance.client.auth.signOut();
 
     if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/login',
+        (route) => false,
+      );
     }
   }
-
-  // =============== MENU ITEM WIDGET ===============
 
   Widget menuItem(IconData icon, String title, VoidCallback onTap) {
     return GestureDetector(

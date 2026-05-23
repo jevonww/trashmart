@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
 
           Positioned(
             bottom: 20,
-            right: 20,
+            right: -300,
 
             child: FloatingActionButton(
               backgroundColor: const Color.fromARGB(255, 66, 110, 68),

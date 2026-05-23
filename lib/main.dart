@@ -32,9 +32,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url:
-        'https://jvfufpdtakovwuhkwdff.supabase.co',
-
+    url: 'https://jvfufpdtakovwuhkwdff.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZnVmcGR0YWtvdnd1aGt3ZGZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTAxMDIsImV4cCI6MjA5MDc4NjEwMn0.1ZiNB3pq7XHMW6spn2CBLzofUozSbukMVG2iI8yNZDc',
   );
@@ -62,7 +60,10 @@ class MyApp extends StatelessWidget {
       // ROUTES
       routes: {
         '/login': (_) => const LoginPage(),
-        '/': (_) => const SplashVideoPage(),
+
+        // DIGANTI: dari SplashVideoPage menjadi AuthChecker
+        '/': (_) => const AuthChecker(),
+
         '/register': (_) => const RegisterPage(),
         '/home': (_) => const HomePage(),
         '/onboarding': (_) => const OnboardingPage(),
@@ -78,31 +79,15 @@ class MyApp extends StatelessWidget {
               currentUsername: '',
               currentEmail: '',
             ),
-
-        '/artikel1': (_) =>
-            const Artikel1Page(),
-
-        '/artikel2': (_) =>
-            const Artikel2Page(),
-
-        '/artikel3': (_) =>
-            const Artikel3Page(),
-
-        '/profiles': (_) =>
-            const ProfilePage(),
-
-        '/adminpage': (_) =>
-            const AdminPage(),
-
-        '/splash': (_) =>
-            const SplashVideoPage(),
-
+        '/artikel1': (_) => const Artikel1Page(),
+        '/artikel2': (_) => const Artikel2Page(),
+        '/artikel3': (_) => const Artikel3Page(),
+        '/profiles': (_) => const ProfilePage(),
+        '/adminpage': (_) => const AdminPage(),
+        '/splash': (_) => const SplashVideoPage(),
         '/refuse': (context) => const RefusePage(),
-
         '/reduce': (context) => const ReducePage(),
-
         '/reuse': (context) => const ReusePage(),
-
         '/recycle': (context) => const RecyclePage(),
       },
     );
@@ -117,13 +102,10 @@ class AuthChecker extends StatefulWidget {
   const AuthChecker({super.key});
 
   @override
-  State<AuthChecker> createState() =>
-      _AuthCheckerState();
+  State<AuthChecker> createState() => _AuthCheckerState();
 }
 
-class _AuthCheckerState
-    extends State<AuthChecker> {
-
+class _AuthCheckerState extends State<AuthChecker> {
   bool loading = true;
   bool isLoggedIn = false;
 
@@ -134,48 +116,73 @@ class _AuthCheckerState
   }
 
   Future<void> checkLogin() async {
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
-    final remember =
-        prefs.getBool('remember_me') ?? false;
+    final remember = prefs.getBool('remember_me') ?? false;
+    final email = prefs.getString('email') ?? '';
+    final password = prefs.getString('password') ?? '';
 
-    final session =
-        Supabase.instance.client.auth.currentSession;
+    final supabase = Supabase.instance.client;
+    final session = supabase.auth.currentSession;
+    final user = supabase.auth.currentUser;
 
-    // JIKA TIDAK CENTANG REMEMBER ME
+    // Kalau remember me aktif dan session masih ada
+    if (remember && session != null && user != null) {
+      setState(() {
+        isLoggedIn = true;
+        loading = false;
+      });
+      return;
+    }
+
+    // Kalau remember me aktif tapi session hilang, login ulang otomatis
+    if (remember && email.isNotEmpty && password.isNotEmpty) {
+      try {
+        final response = await supabase.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+
+        setState(() {
+          isLoggedIn = response.user != null;
+          loading = false;
+        });
+        return;
+      } catch (e) {
+        await prefs.remove('remember_me');
+        await prefs.remove('email');
+        await prefs.remove('password');
+
+        await supabase.auth.signOut();
+      }
+    }
+
+    // Kalau tidak remember me, jangan auto login
     if (!remember && session != null) {
-      await Supabase.instance.client.auth.signOut();
+      await supabase.auth.signOut();
     }
 
     setState(() {
-      isLoggedIn =
-          remember &&
-          Supabase.instance.client.auth.currentSession !=
-              null;
-
+      isLoggedIn = false;
       loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // LOADING
     if (loading) {
       return const Scaffold(
+        backgroundColor: Color(0xFFF9F5EC),
         body: Center(
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
 
-    // SUDAH LOGIN
     if (isLoggedIn) {
       return const HomePage();
     }
 
-    // BELUM LOGIN
     return const SplashVideoPage();
   }
 }
