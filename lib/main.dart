@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trashsmart/pages/artikel1_page.dart';
 import 'package:trashsmart/pages/artikel2_page.dart';
@@ -26,8 +25,6 @@ import 'pages/reduce_page.dart';
 import 'pages/reuse_page.dart';
 import 'pages/recycle_page.dart';
 
-import 'services/notification_service.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -36,12 +33,6 @@ Future<void> main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZnVmcGR0YWtvdnd1aGt3ZGZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTAxMDIsImV4cCI6MjA5MDc4NjEwMn0.1ZiNB3pq7XHMW6spn2CBLzofUozSbukMVG2iI8yNZDc',
   );
-
-  // NOTIFICATION
-  await NotificationService.initialize();
-
-  // PENGINGAT HARIAN
-  await NotificationService.scheduleDailyReminder();
 
   runApp(const MyApp());
 }
@@ -53,42 +44,44 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
-      // HALAMAN AWAL
       initialRoute: '/',
-
-      // ROUTES
       routes: {
-        '/login': (_) => const LoginPage(),
-
-        // DIGANTI: dari SplashVideoPage menjadi AuthChecker
         '/': (_) => const AuthChecker(),
 
+        '/login': (_) => const LoginPage(),
         '/register': (_) => const RegisterPage(),
+
         '/home': (_) => const HomePage(),
         '/onboarding': (_) => const OnboardingPage(),
-        '/organik': (context) => const OrganikPage(),
-        '/anorganik': (context) => const AnorganikPage(),
-        '/b3': (context) => const B3Page(),
-        '/kertas': (context) => const KertasPage(),
-        '/residu': (context) => const ResiduPage(),
-        '/welcome': (context) => const WelcomePage(),
-        '/learning': (context) => const TrashLearningPage(),
-        '/news': (context) => const TrashNewsPage(),
-        '/data': (context) => DataProfilePage(
+
+        '/organik': (_) => const OrganikPage(),
+        '/anorganik': (_) => const AnorganikPage(),
+        '/b3': (_) => const B3Page(),
+        '/kertas': (_) => const KertasPage(),
+        '/residu': (_) => const ResiduPage(),
+
+        '/welcome': (_) => const WelcomePage(),
+        '/learning': (_) => const TrashLearningPage(),
+        '/news': (_) => const TrashNewsPage(),
+
+        '/data': (_) => DataProfilePage(
               currentUsername: '',
               currentEmail: '',
             ),
+
         '/artikel1': (_) => const Artikel1Page(),
         '/artikel2': (_) => const Artikel2Page(),
         '/artikel3': (_) => const Artikel3Page(),
+
         '/profiles': (_) => const ProfilePage(),
         '/adminpage': (_) => const AdminPage(),
+
         '/splash': (_) => const SplashVideoPage(),
-        '/refuse': (context) => const RefusePage(),
-        '/reduce': (context) => const ReducePage(),
-        '/reuse': (context) => const ReusePage(),
-        '/recycle': (context) => const RecyclePage(),
+
+        '/refuse': (_) => const RefusePage(),
+        '/reduce': (_) => const ReducePage(),
+        '/reuse': (_) => const ReusePage(),
+        '/recycle': (_) => const RecyclePage(),
       },
     );
   }
@@ -112,60 +105,37 @@ class _AuthCheckerState extends State<AuthChecker> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    checkSession();
   }
 
-  Future<void> checkLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> checkSession() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 800));
 
-    final remember = prefs.getBool('remember_me') ?? false;
-    final email = prefs.getString('email') ?? '';
-    final password = prefs.getString('password') ?? '';
+      final supabase = Supabase.instance.client;
 
-    final supabase = Supabase.instance.client;
-    final session = supabase.auth.currentSession;
-    final user = supabase.auth.currentUser;
+      final session = supabase.auth.currentSession;
+      final user = supabase.auth.currentUser;
 
-    // Kalau remember me aktif dan session masih ada
-    if (remember && session != null && user != null) {
+      debugPrint("AUTH CHECK SESSION: ${session != null}");
+      debugPrint("AUTH CHECK USER: ${user?.id}");
+
+      if (!mounted) return;
+
       setState(() {
-        isLoggedIn = true;
+        isLoggedIn = session != null && user != null;
         loading = false;
       });
-      return;
+    } catch (e) {
+      debugPrint("AUTH CHECK ERROR: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoggedIn = false;
+        loading = false;
+      });
     }
-
-    // Kalau remember me aktif tapi session hilang, login ulang otomatis
-    if (remember && email.isNotEmpty && password.isNotEmpty) {
-      try {
-        final response = await supabase.auth.signInWithPassword(
-          email: email,
-          password: password,
-        );
-
-        setState(() {
-          isLoggedIn = response.user != null;
-          loading = false;
-        });
-        return;
-      } catch (e) {
-        await prefs.remove('remember_me');
-        await prefs.remove('email');
-        await prefs.remove('password');
-
-        await supabase.auth.signOut();
-      }
-    }
-
-    // Kalau tidak remember me, jangan auto login
-    if (!remember && session != null) {
-      await supabase.auth.signOut();
-    }
-
-    setState(() {
-      isLoggedIn = false;
-      loading = false;
-    });
   }
 
   @override
@@ -174,7 +144,9 @@ class _AuthCheckerState extends State<AuthChecker> {
       return const Scaffold(
         backgroundColor: Color(0xFFF9F5EC),
         body: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Color(0xFF3C5122),
+          ),
         ),
       );
     }
