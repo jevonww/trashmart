@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- SUPABASE OAUTH CALLBACK (Google Login) -->
+            <!-- SUPABASE CALLBACK / EMAIL CONFIRM / GOOGLE LOGIN -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -37,6 +37,17 @@
                 <data
                     android:scheme="trashsmart"
                     android:host="auth-callback"/>
+            </intent-filter>
+
+            <!-- SUPABASE EMAIL CONFIRM CALLBACK CADANGAN -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:scheme="trashsmart"
+                    android:host="login-callback"/>
             </intent-filter>
 
         </activity>
