@@ -30,6 +30,12 @@ class AuthService {
         'id': user.id,
         'username': username,
         'email': email,
+
+        // Kolom password tetap diisi agar tidak NULL.
+        // Password asli tetap aman di Supabase Auth.
+        'password': password,
+
+        'points': 0,
       });
 
       return null;
