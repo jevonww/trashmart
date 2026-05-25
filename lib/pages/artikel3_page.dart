@@ -30,7 +30,7 @@ class _Artikel3PageState extends State<Artikel3Page> {
   static const String articleTitle =
       'Pemkot Bandung membangun empat insinerator baru atasi masalah sampah';
   static const String articleImage = 'assets/artikel_3.png';
-  static const String articleDate = '13 Nov 2025 08:19 WIB';
+  static const String articleDate = ' Jumat, 14 November 2025 23:36 WIB';
 
   Future<void> claimArticleReward() async {
     try {

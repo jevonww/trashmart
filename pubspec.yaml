@@ -77,6 +77,8 @@ flutter:
     - assets/rokok.png
     - assets/masker.png
     - assets/kantong_teh.png
+    - assets/icon_aplikasi.png
+    - assets/user_profile.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -131,5 +133,5 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon.png"
+  image_path: "assets/icon_aplikasi.png"
   min_sdk_android: 21

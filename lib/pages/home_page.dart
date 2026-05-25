@@ -290,7 +290,7 @@ class _HomeMainContentState extends State<HomeMainContent> {
                 ),
                 child: const CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage('assets/logo.png'),
+                  backgroundImage: AssetImage('assets/user_profile.png'),
                 ),
               ),
             ),

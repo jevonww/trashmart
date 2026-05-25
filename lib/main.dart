@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:trashsmart/pages/artikel1_page.dart';
@@ -25,8 +26,31 @@ import 'pages/reduce_page.dart';
 import 'pages/reuse_page.dart';
 import 'pages/recycle_page.dart';
 
+Future<void> applyImmersiveMode() async {
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Colors.transparent,
+    ),
+  );
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ================================
+  // HIDE SYSTEM NAVIGATION BAR
+  // MODE PALING KUAT UNTUK ANDROID
+  // ================================
+  await applyImmersiveMode();
 
   await Supabase.initialize(
     url: 'https://jvfufpdtakovwuhkwdff.supabase.co',
@@ -37,11 +61,45 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+
+    // Jaga-jaga setelah app pertama tampil.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      applyImmersiveMode();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Kalau app dibuka lagi dari background, hide lagi navigation bar.
+    if (state == AppLifecycleState.resumed) {
+      applyImmersiveMode();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Jaga-jaga kalau navigation bar muncul lagi setelah pindah page.
+    applyImmersiveMode();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -105,6 +163,8 @@ class _AuthCheckerState extends State<AuthChecker> {
   @override
   void initState() {
     super.initState();
+
+    applyImmersiveMode();
     checkSession();
   }
 
@@ -140,6 +200,8 @@ class _AuthCheckerState extends State<AuthChecker> {
 
   @override
   Widget build(BuildContext context) {
+    applyImmersiveMode();
+
     if (loading) {
       return const Scaffold(
         backgroundColor: Color(0xFFF9F5EC),

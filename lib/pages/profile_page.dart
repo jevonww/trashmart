@@ -19,6 +19,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String email = "";
   bool isLoading = true;
 
+  final Color darkGreen = const Color(0xFF3F4F44);
+  final Color cream = const Color(0xFFF8F3E8);
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
         .eq('id', user.id)
         .maybeSingle();
 
+    if (!mounted) return;
+
     setState(() {
       username = data?['username'] ?? "User";
       email = data?['email'] ?? user.email ?? "email@unknown.com";
@@ -47,12 +52,249 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  Future<void> _handleLogout(BuildContext context) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: cream,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 82,
+                  height: 82,
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.red,
+                    size: 44,
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                const Text(
+                  "Keluar dari Akun?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF26351F),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  "Kamu akan keluar dari akun TrashSmart. Kamu bisa login kembali kapan saja.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                    height: 1.45,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop(false);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(
+                            color: darkGreen,
+                            width: 1.2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          "Batal",
+                          style: TextStyle(
+                            color: darkGreen,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop(true);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Text(
+                          "Keluar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: cream,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 26,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: darkGreen,
+                  strokeWidth: 3,
+                ),
+                const SizedBox(width: 18),
+                const Text(
+                  "Sedang logout...",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: Color(0xFF26351F),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.remove('remember_me');
+      await prefs.remove('email');
+      await prefs.remove('password');
+
+      await Supabase.instance.client.auth.signOut();
+
+      if (!context.mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/login',
+        (route) => false,
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      Navigator.of(context, rootNavigator: true).pop();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Gagal logout: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget menuItem(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    bool isDanger = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 22,
+                  color: isDanger ? Colors.red : Colors.black87,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isDanger ? Colors.red : Colors.black87,
+                    fontWeight: isDanger ? FontWeight.w700 : FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: isDanger ? Colors.red : Colors.black87,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F3E8),
+      backgroundColor: cream,
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: darkGreen,
+              ),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [
@@ -96,8 +338,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         left: 20,
                         top: 40,
                         child: GestureDetector(
-                          onTap: () =>
-                              Navigator.pushReplacementNamed(context, '/home'),
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
@@ -118,7 +361,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           backgroundColor: Colors.white,
                           child: const CircleAvatar(
                             radius: 50,
-                            backgroundImage: AssetImage("assets/logo.png"),
+                            backgroundImage:
+                                AssetImage("assets/user_profile.png"),
                           ),
                         ),
                       ),
@@ -212,73 +456,16 @@ class _ProfilePageState extends State<ProfilePage> {
                           Icons.logout,
                           "Logout",
                           () => _handleLogout(context),
+                          isDanger: true,
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
-    );
-  }
-
-  Future<void> _handleLogout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Apakah Anda yakin ingin logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.remove('remember_me');
-    await prefs.remove('email');
-    await prefs.remove('password');
-
-    await Supabase.instance.client.auth.signOut();
-
-    if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/login',
-        (route) => false,
-      );
-    }
-  }
-
-  Widget menuItem(IconData icon, String title, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 22, color: Colors.black87),
-                const SizedBox(width: 12),
-                Text(title, style: const TextStyle(fontSize: 16)),
-              ],
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 16),
-          ],
-        ),
-      ),
     );
   }
 }
